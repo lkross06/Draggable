@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
-        <title>ReactJS test</title>
+        <title>Draggable</title>
         <style>
 
             html {
@@ -14,9 +14,8 @@
 
             .node {
                 position: absolute;
-                width: 100px;
-                height: 100px;
-                background: rgba(105, 255, 252, 0.4);
+                width: 99px; /* the border is 1px for a total of 100px */
+                height: 99px;
                 left: 50%;
                 top: 50%;
                 padding: none;
@@ -24,6 +23,11 @@
                 border-radius: 4px;
                 user-select: none;
             }
+
+            .var {
+                background-color: rgba(80, 237, 255, 0.2);
+            }
+
             footer {
                 position: absolute;
             }
@@ -54,10 +58,14 @@
         <div class="grid" id="hGrid"></div>
         <div class="grid" id="vGrid"></div>
         <footer>
+            <button onclick="addVar()">add variable</button>
             <button onclick="addNode()">add node</button>
-            <input type="number" name="tickvals" id="tickvals" min="0" max="1000" step="10" value="0">
+            <input type="number" name="tickvals" id="tickvals" min="0" max="1000" step="50" value="0">
         </footer>  
+        
         <script>
+                //size of node (in pixels)
+                const len = 100;
                 //current mouse pos
                 let mouseX = 0;
                 let mouseY = 0;
@@ -74,10 +82,25 @@
                 //grid snap (in pixels)
                 let tick = 0;
 
-                function addNode() {
-                    let newNode = document.createElement("input");
-                    newNode.setAttribute("class", "node");
-                    newNode.setAttribute("type", "textfield")
+                function addNode(type) {
+                    //only make a new node if the type is valid (aka a string)
+                    if (type.toString() === type){
+                        let newNode = document.createElement("div");
+                        newNode.setAttribute("class", type + " node");
+                        newNode.innerText = "deez nuts"
+                        newNode.setAttribute("id", numNodes.toString());
+
+                        document.getElementById("body").appendChild(newNode)
+                        numNodes++;
+                    }
+                    
+                } 
+                
+                function addVar(){
+                    let newNode = document.createElement("input");    
+                    newNode.setAttribute("class", "var node");
+                    newNode.setAttribute("type", "text")
+                    newNode.innerText = "deez nuts"
                     newNode.setAttribute("id", numNodes.toString());
 
                     document.getElementById("body").appendChild(newNode)
@@ -85,6 +108,7 @@
                 }
 
                 function updateCoords() {
+                    //update the mouse coordinates
                     let e = window.event;
                     mouseX = e.clientX;
                     mouseY = e.clientY;
@@ -108,7 +132,7 @@
                 document.addEventListener("mousemove", (event) => {
                     updateCoords();
                     if (currentNode == null) {
-                        for (let node of document.getElementsByClassName("node")) {
+                        for (let node of document.getElementsByClassName("node var")) {
                             if (event.target == node && mouseDown) {
                                 currentNode = node;
                             }
@@ -137,7 +161,7 @@
                 function snapToGrid() {
                     if (tick != 0){
                         //X grid snap
-                        let factorX = (currentNode.offsetLeft + (tick/2 - currentNode.offsetWidth/2))/tick; //how many times the current X goes into the grid (basically how many tiles across)
+                        let factorX = (currentNode.offsetLeft + (tick/2 - len/2))/tick; //how many times the current X goes into the grid (basically how many tiles across)
                         let belowX = Math.floor(factorX) * tick; //the multiple of the grid tick val that is directly below the current X
                         let belowDiffX = Math.abs(belowX - currentNode.offsetLeft); //the distance between the bottom threshold and current X val
                         let aboveX = belowX + tick; //the multiple of the grid tick val that is directly after the current X (aka after the below threshold)
@@ -146,20 +170,13 @@
                         if (belowDiffX < aboveDiffX){
                             //round down
                             currentNode.style.left = belowX + "px";
-                            //if its wider than the node itself we gotta center it
-                            if (tick > currentNode.offsetWidth){
-                                currentNode.style.left = getMiddleX(belowX) + "px";
-                            }
                         } else {
                             //round down
-                            currentNode.style.left = aboveX + "px";
-                            //if its wider than the node itself we gotta center it
-                            if (tick > currentNode.offsetWidth){
-                                currentNode.style.left = getMiddleX(aboveX) + "px";
-                            }                        }
+                            currentNode.style.left = aboveX + "px";                   
+                        }
 
                         //Y grid snap
-                        let factorY = (currentNode.offsetTop + (tick/2 - currentNode.offsetHeight/2))/tick; //how many times the current Y goes into the grid (basically how many tiles across)
+                        let factorY = (currentNode.offsetTop + (tick/2 - len/2))/tick; //how many times the current Y goes into the grid (basically how many tiles across)
                         let belowY = Math.floor(factorY) * tick; //the multiple of the grid tick val that is directly below the current Y
                         let belowDiffY = Math.abs(belowY - currentNode.offsetTop); //the distance between the bottom threshold and current Y val
                         let aboveY = belowY + tick; //the multiple of the grid tick val that is directly after the current Y (aka after the below threshold)
@@ -168,27 +185,11 @@
                         if (belowDiffY < aboveDiffY){
                             //round down
                             currentNode.style.top = belowY + "px";
-                            //if its taller than the node itself we gotta center it
-                            if (tick > currentNode.offsetHeight){
-                                currentNode.style.top = getMiddleY(belowY) + "px";
-                            }
                         } else {
                             //round up
                             currentNode.style.top = aboveY + "px";
-                            //if its taller than the node itself we gotta center it
-                            if (tick > currentNode.offsetHeight){
-                                currentNode.style.top = getMiddleY(aboveY) + "px";
-                            }                        
                         }
                     }
-                }
-
-                function getMiddleX(val){
-                    return (val + (tick/2 - currentNode.offsetWidth/2))
-                }
-
-                function getMiddleY(val){
-                    return (val + (tick/2 - currentNode.offsetHeight/2))
                 }
 
                 function rewriteGrid(){
@@ -201,29 +202,32 @@
                     while (vgrid.lastChild){
                         vgrid.removeChild(vgrid.lastChild);
                     }
-
-                    //then draw new lines
-                    for (let i = 0; i < window.innerHeight - tick; i += tick){
+                    if (tick != 0){
+                        //then draw new lines
+                    for (let i = (tick/2 + len/2); i < window.outerHeight - tick; i += tick){
                         //make the horizontal line
                         let hLine = document.createElement("div");
                         hLine.setAttribute("class", "hLine gridline");
                         hLine.style.top = i + "px";
                         hgrid.appendChild(hLine);
                     }
-                    for (let i = 0; i < window.innerWidth; i+= tick){
+                    for (let i = (tick/2 + len/2); i < window.outerWidth; i+= tick){
                         //make the vertical line
                         let vLine = document.createElement("div");
                         vLine.setAttribute("class", "vLine gridline");
                         vLine.style.left = i + "px";
                         vgrid.appendChild(vLine)  
                     }
+                    }
+                    
                 }
 
                 document.getElementById("tickvals").addEventListener("change", (event) => {
                     tick = parseInt(document.getElementById("tickvals").value);
                     if (tick != 0){
                         rewriteGrid();
-                        snapToGrid();
+                        if (currentNode != null) snapToGrid();
+                       
                     }
                 });
         </script>
