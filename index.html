@@ -20,7 +20,7 @@
             .node {
                 position: absolute;
                 width: 95px; /* the border is 1px, padding is 2px + 2px, for a total of 100px */
-                height: 95px;
+                height: 195px;
                 background-color: rgba(128, 128, 128, 0.2);
                 left: 50%;
                 top: 50%;
@@ -66,7 +66,7 @@
                 border-radius: 2px;
                 background-color: rgba(128, 128, 128, 0.2);
                 margin: 2px;
-                font-size: 14px;
+                font-size: 18px;
             }
             .button:hover {
                 background-color: rgba(128, 128, 128, 0.4);
@@ -90,8 +90,8 @@
                 position: absolute;
                 left: 0px;
                 top: 0px;
-                width: 150px;
-                height: 200px;
+                width: fit-content;
+                height: fit-content;
                 border: 1px solid black;
                 background-color: rgba(255, 255, 255, 1);
                 padding: 4px;
@@ -105,10 +105,8 @@
             #edit-modal-color {
                 display: none;
             }
-            #edit-modal-color div {
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-                align-items: center;
+            #edit-modal-color div span {
+                margin: 0px 8px 0px 8px;
             }
 
             #edit-text{
@@ -125,9 +123,8 @@
                 margin-top: 4px;
                 margin-bottom: 4px;
             }
-            .rgb-slider {
-                width: 80px;
-            }
+
+
         </style>
     </head>
     <body id="body">
@@ -142,8 +139,8 @@
                 <span id="edit-modal-main">
                     <span id="edit-modal-desc">
                         <h3>node #<span id="modalNumNode"></span></h3>
-                        <p id="grid-pos"></p>
-                        <p>(<span id="r-desc">128</span>, <span id="g-desc">128</span>, <span id="b-desc">128</span>)</p>
+                        <p>coords: <span id="grid-pos"></span></p>
+                        <p>background: (<span id="r-desc">128</span>, <span id="g-desc">128</span>, <span id="b-desc">128</span>)</p>
                     </span>
                     <br>
                     <button onclick='showSubMenu("edit-modal-text")' class="button">edit text</button>
@@ -153,11 +150,13 @@
                 </span>
                 
                 <span id="edit-modal-color">
+                    <h3>change color</h3>
                     <div id="r"><span id="r-title">R</span><input type="range" min="0" max="255" val="128" id="r-slider" class="rgb-slider"><span id="r-val" >128</span></div>
                     <div id="g"><span id="g-title">G</span><input type="range" min="0" max="255" val="128" id="g-slider" class="rgb-slider"><span id="g-val" >128</span></div>
                     <div id="b"><span id="b-title">B</span><input type="range" min="0" max="255" val="128" id="b-slider" class="rgb-slider"><span id="b-val" >128</span></div>
                 </span>
                 <span id="edit-modal-text">
+                    <h3>edit text</h3>
                     <textarea id="edit-text" maxlength="100"></textarea>
                 </span>
             </span>

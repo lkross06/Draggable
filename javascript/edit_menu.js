@@ -36,6 +36,9 @@ function duplicate(node){
 
     newNode.style.left = node.offsetLeft + "px";
     newNode.style.top = node.offsetTop + "px";
+
+    //finally, hide the edit menu
+    hideEdit();
 }
 
 //gets the grid position of the node (assuming one exists)
@@ -90,11 +93,21 @@ function showEdit(node){
     document.getElementById("modalNumNode").innerText = node.getAttribute("id");
 
     //fix submenu values
+    //the slider and the text next to it
+    document.getElementById("r-slider").setAttribute("val", backgrounds[node.getAttribute("id")][0]);
+    document.getElementById("g-slider").setAttribute("val", backgrounds[node.getAttribute("id")][1]);
+    document.getElementById("b-slider").setAttribute("val", backgrounds[node.getAttribute("id")][2]);
+    document.getElementById("r-val").innerText = backgrounds[node.getAttribute("id")][0];
+    document.getElementById("g-val").innerText = backgrounds[node.getAttribute("id")][1];
+    document.getElementById("b-val").innerText = backgrounds[node.getAttribute("id")][2];
+
+    //the text on the main menu
     document.getElementById("r-desc").innerText = backgrounds[node.getAttribute("id")][0];
     document.getElementById("g-desc").innerText = backgrounds[node.getAttribute("id")][1];
     document.getElementById("b-desc").innerText = backgrounds[node.getAttribute("id")][2];
 
     document.getElementById("edit-text").innerText = node.innerText;
+
 
     let coords = getGridPosition(node);
     document.getElementById("grid-pos").innerText = "[" + coords.x + ", " + coords.y + "]";
@@ -105,7 +118,7 @@ function hideEdit(){
     edit.parentNode.style.display = "none";
     edit.style.left = "0px";
     edit.style.top = "0px";
-
+    modalShown = false;
     modalNode = null;
     resetEdit();
 }
