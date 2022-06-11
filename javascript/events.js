@@ -1,6 +1,16 @@
-document.getElementById("tickvals").addEventListener("change", (event) => {
+document.getElementById("tickvals").addEventListener("change", () => {
     //set the tick value and re-draw the lines
-    tick = parseInt(document.getElementById("tickvals").value);
+    
+    //toggle the tick
+    if (tick == 0){
+        //its down
+        tick = 100;
+        document.getElementById("tickval-label").setAttribute("class", "button toggled-button")
+    } else {
+        //its up
+        tick = 0;
+        document.getElementById("tickval-label").setAttribute("class", "button")
+    }
     rewriteGrid();
     for (let node of document.getElementsByClassName("node")){
         snapToGrid(node);
@@ -81,6 +91,13 @@ document.addEventListener("mousemove", (event) => {
     }
 });
 
-document.getElementById("edit-text").addEventListener("keyup", (event) => {
+document.getElementById("edit-text").addEventListener("keyup", () => {
     modalNode.innerText = document.getElementById("edit-text").value;
+});
+
+document.getElementById("dim-box-x").addEventListener("change", () => {
+    changeDimension(document.getElementById("dim-box-x"), true)
+});
+document.getElementById("dim-box-y").addEventListener("change", () => {
+    changeDimension(document.getElementById("dim-box-y"), false)
 });

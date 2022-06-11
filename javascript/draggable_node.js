@@ -36,7 +36,7 @@ function moveCurrentNode() {
 function snapToGrid(node) {
 if (tick != 0){
     //X grid snap
-    let factorX = (node.offsetLeft + (tick/2 - len/2))/tick; //how many times the current X goes into the grid (basically how many tiles across)
+    let factorX = node.offsetLeft/tick; //how many times the current X goes into the grid (basically how many tiles across)
     let belowX = Math.floor(factorX) * tick; //the multiple of the grid tick val that is directly below the current X
     let belowDiffX = Math.abs(belowX - node.offsetLeft); //the distance between the bottom threshold and current X val
     let aboveX = belowX + tick; //the multiple of the grid tick val that is directly after the current X (aka after the below threshold)
@@ -51,7 +51,7 @@ if (tick != 0){
     }
 
     //Y grid snap
-    let factorY = (node.offsetTop + (tick/2 - len/2))/tick; //how many times the current Y goes into the grid (basically how many tiles across)
+    let factorY = node.offsetTop/tick; //how many times the current Y goes into the grid (basically how many tiles across)
     let belowY = Math.floor(factorY) * tick; //the multiple of the grid tick val that is directly below the current Y
     let belowDiffY = Math.abs(belowY - node.offsetTop); //the distance between the bottom threshold and current Y val
     let aboveY = belowY + tick; //the multiple of the grid tick val that is directly after the current Y (aka after the below threshold)
@@ -80,14 +80,14 @@ while (vgrid.lastChild){
 }
 if (tick != 0){
     //then draw new lines
-for (let i = (tick/2 + len/2); i < window.outerHeight - tick; i += tick){
+for (let i = 0; i < window.outerHeight - tick; i += tick){
     //make the horizontal line
     let hLine = document.createElement("div");
     hLine.setAttribute("class", "hLine gridline");
     hLine.style.top = i + "px";
     hgrid.appendChild(hLine);
 }
-for (let i = (tick/2 + len/2); i < window.outerWidth; i+= tick){
+for (let i = 0; i < window.outerWidth; i+= tick){
     //make the vertical line
     let vLine = document.createElement("div");
     vLine.setAttribute("class", "vLine gridline");
@@ -100,17 +100,15 @@ for (let i = (tick/2 + len/2); i < window.outerWidth; i+= tick){
 
 //adds a node with text
 function addNode() {
-let newNode = document.createElement("div");
-newNode.setAttribute("class", "node");
-newNode.setAttribute("id", numNodes.toString());
+    let newNode = document.createElement("div");
+    newNode.setAttribute("class", "node");
+    newNode.setAttribute("id", numNodes.toString());
+    newNode.style.backgroundColor = "rgba(128, 128, 128, 0.2)"
 
-document.getElementById("body").appendChild(newNode)
-numNodes++;
+    document.getElementById("body").appendChild(newNode)
+    numNodes++;
 
-//update the RGB array (we know that the bg is 128, 128, 128)
-backgrounds.push([128, 128, 128]);
-
-if (tick != 0) snapToGrid(newNode);
+    if (tick != 0) snapToGrid(newNode);
 }
 
 function updateCoords() {

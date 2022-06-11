@@ -19,8 +19,8 @@
 
             .node {
                 position: absolute;
-                width: 95px; /* the border is 1px, padding is 2px + 2px, for a total of 100px */
-                height: 195px;
+                width: 94px; /* the border is 1px, padding is 2px + 2px, for a total of 100px */
+                height: 94px;
                 background-color: rgba(128, 128, 128, 0.2);
                 left: 50%;
                 top: 50%;
@@ -32,7 +32,7 @@
             }
             footer {
                 position: absolute;
-                
+                user-select: none;
             }
             
             footer * {
@@ -77,6 +77,10 @@
 
             }
 
+            .toggled-button{
+                background-color: rgba(128, 128, 128, 0.4);
+            }
+
             #edit-modal{
                 display: none;
                 position: fixed;
@@ -90,6 +94,7 @@
                 position: absolute;
                 left: 0px;
                 top: 0px;
+                min-width: 220px;
                 width: fit-content;
                 height: fit-content;
                 border: 1px solid black;
@@ -102,7 +107,7 @@
                 display: block;
             }
 
-            #edit-modal-color {
+            #edit-modal-color, #edit-modal-text, #edit-modal-size {
                 display: none;
             }
             #edit-modal-color div span {
@@ -115,15 +120,23 @@
                 text-align: left;
             }
 
-            #edit-modal-text {
-                display: none;
-            }
-
             #edit-modal-desc * {
                 margin-top: 4px;
                 margin-bottom: 4px;
             }
 
+            #tickvals {
+                display: none;
+            }
+
+            .dim-box {
+                width: 2em;
+                border: 1px solid black;
+            }
+
+            .modal-button {
+                width: 80px;
+            }
 
         </style>
     </head>
@@ -132,32 +145,39 @@
         <div class="grid" id="vGrid"></div>
         <footer>
             <button onclick="addNode()" class="button">add node</button>
-            <input type="number" name="tickvals" id="tickvals" min="0" max="1000" step="50" value="0">
+            <label for="tickvals" class="button" id="tickval-label">grid snap</label>
+            <input type="checkbox" name="tickvals" id="tickvals" value="false">
         </footer>  
         <div id="edit-modal">
             <span id="edit-modal-content">
                 <span id="edit-modal-main">
                     <span id="edit-modal-desc">
-                        <h3>node #<span id="modalNumNode"></span></h3>
+                        <h3>node #<span id="num-node"></span></h3>
                         <p>coords: <span id="grid-pos"></span></p>
                         <p>background: (<span id="r-desc">128</span>, <span id="g-desc">128</span>, <span id="b-desc">128</span>)</p>
+                        <p>size: <span id="node-width">1</span> x <span id="node-height">1</span></p>
                     </span>
                     <br>
-                    <button onclick='showSubMenu("edit-modal-text")' class="button">edit text</button>
-                    <button onclick='showSubMenu("edit-modal-color")' class="button">change color</button>
-                    <button onclick="duplicate(modalNode)" class="button">duplicate</button>
-                    <button onclick="deleteNode(modalNode)" class="button">delete node</button>
+                    <button onclick='showSubMenu("edit-modal-text")' class="button modal-button">edit text</button>
+                    <button onclick='showSubMenu("edit-modal-size")' class="button modal-button">edit size</button>
+                    <button onclick='showSubMenu("edit-modal-color")' class="button modal-button">edit color</button>
+                    <button onclick="duplicate(modalNode)" class="button modal-button">duplicate</button>
+                    <button onclick="deleteNode(modalNode)" class="button modal-button">delete</button>
                 </span>
                 
-                <span id="edit-modal-color">
-                    <h3>change color</h3>
-                    <div id="r"><span id="r-title">R</span><input type="range" min="0" max="255" val="128" id="r-slider" class="rgb-slider"><span id="r-val" >128</span></div>
-                    <div id="g"><span id="g-title">G</span><input type="range" min="0" max="255" val="128" id="g-slider" class="rgb-slider"><span id="g-val" >128</span></div>
-                    <div id="b"><span id="b-title">B</span><input type="range" min="0" max="255" val="128" id="b-slider" class="rgb-slider"><span id="b-val" >128</span></div>
-                </span>
+                <form id="edit-modal-color">
+                    <h3>edit color</h3>
+                    <div id="r"><span id="r-title">R</span><span id="r-container"><input type="range" min="0" max="255" value="128" id="r-slider" class="rgb-slider"></span><span id="r-val" >128</span></div>
+                    <div id="g"><span id="g-title">G</span><span id="g-container"><input type="range" min="0" max="255" value="128" id="g-slider" class="rgb-slider"></span><span id="g-val" >128</span></div>
+                    <div id="b"><span id="b-title">B</span><span id="b-container"><input type="range" min="0" max="255" value="128" id="b-slider" class="rgb-slider"></span><span id="b-val" >128</span></div>
+                </form>
                 <span id="edit-modal-text">
                     <h3>edit text</h3>
                     <textarea id="edit-text" maxlength="100"></textarea>
+                </span>
+                <span id="edit-modal-size">
+                    <h3>edit size</h3>
+                    <p>dimensions: <input type="number" min="1" max="10" class="dim-box" value="1" id="dim-box-x"> x <input type="number" min="1" max="10" class="dim-box" value="1" id="dim-box-y"></p>
                 </span>
             </span>
         </div>
